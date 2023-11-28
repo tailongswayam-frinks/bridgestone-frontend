@@ -22,17 +22,19 @@ function PrintingAnalysis({ printingBelts, handleBeltReset }) {
             </p>
           ) : (
             <Grid container spacing={2}>
-              {printingBelts
-                && Object.keys(printingBelts)?.map((e, index) => (
+              {printingBelts &&
+                Object.keys(printingBelts)?.map((e, index) => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                     <AnalyticsCard
                       data={{
                         ...printingBelts[e],
                       }}
-                      rejectModalOpen={() => setRejectModalOpen({
-                        ...printingBelts[e],
-                        printing_belt_id: e,
-                      })}
+                      rejectModalOpen={() =>
+                        setRejectModalOpen({
+                          ...printingBelts[e],
+                          printing_belt_id: e,
+                        })
+                      }
                       handleBeltReset={handleBeltReset}
                       printingCard
                       status={0}
@@ -51,7 +53,19 @@ function PrintingAnalysis({ printingBelts, handleBeltReset }) {
           hideConfirm
           hideComment
         >
-          <DefectiveBags belt_id={rejectModalOpen?.printing_belt_id} />
+          <DefectiveBags
+            belt_id={rejectModalOpen?.printing_belt_id}
+            // hour={hour}
+            date={[
+              {
+                startDate: new Date(),
+                endDate: new Date(),
+                key: 'selection',
+              },
+            ]}
+            dateUnAltered={true}
+          />
+          {/* <DefectiveBags belt_id={rejectModalOpen?.printing_belt_id} /> */}
         </InfoModal>
       ) : null}
     </>
