@@ -1,30 +1,29 @@
 Arguments: 
-  /home/mukul/.nvm/versions/node/v16.20.0/bin/node /usr/share/yarn/bin/yarn.js add stream-saver
+  C:\Program Files\nodejs\node.exe C:\Users\swayam tailong\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js --no-cache
 
 PATH: 
-  /home/mukul/.nvm/versions/node/v16.20.0/bin:/home/mukul/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+  C:\Users\swayam tailong\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\swayam tailong\bin;C:\Program Files (x86)\Intel\iCLS Client;C:\Program Files\Intel\iCLS Client;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Intel\WiFi\bin;C:\Program Files\Common Files\Intel\WirelessCommon;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Git\cmd;C:\Program Files\Redis\Redis-x64-3.0.504;C:\Program Files\MySQL\MySQL Server 8.0\bin;C:\Program Files\Redis;C:\Program Files\Docker\Docker\resources\bin;%NVM_HOME%;%NVM_SYMLINK%;C:\Users\swayam tailong\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\swayam tailong\AppData\Local\Programs\Python\Python311;C:\Program Files\MySQL\MySQL Shell 8.0\bin;C:\MinGW\bin;C:\Users\swayam tailong\AppData\Local\Microsoft\WindowsApps;C:\src\flutter\bin;C:\Users\swayam tailong\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\swayam tailong\AppData\Local\hyper\app-3.0.2\resources\bin;C:\Program Files\heroku\bin;C:\Users\swayam tailong\AppData\Local\Microsoft\WindowsApps;C:\Users\swayam tailong\AppData\Roaming\npm;C:\Users\swayam tailong\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
 
 Yarn version: 
   1.22.19
 
 Node version: 
-  16.20.0
+  16.20.2
 
 Platform: 
-  linux x64
+  win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/stream-saver: Not found
-      at Request.params.callback [as _callback] (/usr/share/yarn/lib/cli.js:66145:18)
-      at Request.self.callback (/usr/share/yarn/lib/cli.js:140890:22)
-      at Request.emit (node:events:513:28)
-      at Request.<anonymous> (/usr/share/yarn/lib/cli.js:141862:10)
-      at Request.emit (node:events:513:28)
-      at IncomingMessage.<anonymous> (/usr/share/yarn/lib/cli.js:141784:12)
+  Error: https://registry.npmjs.org/@mui/icons-material/-/icons-material-5.11.16.tgz: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (C:\Users\swayam tailong\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141517:19)
       at Object.onceWrapper (node:events:627:28)
-      at IncomingMessage.emit (node:events:525:35)
-      at endReadableNT (node:internal/streams/readable:1358:12)
-      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+      at ClientRequest.emit (node:events:513:28)
+      at TLSSocket.emitRequestTimeout (node:_http_client:839:9)
+      at Object.onceWrapper (node:events:627:28)
+      at TLSSocket.emit (node:events:525:35)
+      at TLSSocket.Socket._onTimeout (node:net:550:8)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
 
 npm manifest: 
   {
@@ -62,7 +61,6 @@ npm manifest:
       "engine.io-client": "^6.4.0",
       "express": "^4.18.2",
       "faker": "^6.6.6",
-      "file-saver": "^2.0.5",
       "formik": "^2.2.9",
       "jquery": "^3.6.0",
       "moment": "^2.29.3",

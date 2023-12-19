@@ -22,6 +22,7 @@ import Alert from '@material-ui/lab/Alert';
 import { Button } from '@material-ui/core';
 import ShipmentTracking from 'components/ShipmentAnalysis';
 import LoaderRelation from 'components/LoaderRelation';
+import PrintingShipmentAnalysis from 'components/PrintingTrackingAnalysis';
 
 function DashboardComponent({
   activeSection,
@@ -34,6 +35,7 @@ function DashboardComponent({
   handleFlag
 }) {
   // console.log(handleBeltReset);
+  console.log('Dashboard component recieved value:', activeSection);
   if (activeSection === 0) {
     return (
       <ShipmentTracking
@@ -77,6 +79,18 @@ function DashboardComponent({
   if (activeSection === 5) {
     return <SystemHealth />;
   }
+  if (activeSection === 7) {
+    return (
+      <PrintingShipmentAnalysis
+        vehicleBelts={printingBelts}
+        handleNewShipment={handleNewShipment}
+        handleFlag={handleFlag}
+        handleBagDone={handleBagDone}
+        handleBagIncrement={handleBagIncrement}
+        handleBeltReset={handleBeltReset}
+      />
+    );
+  }
   return <LoaderRelation />;
 }
 
@@ -98,6 +112,7 @@ function Index() {
   const [bagDoneModalOpen, setBagDoneModalOpen] = useState(null);
   const [bagIncrementModalOpen, setBagIncrementModalOpen] = useState(null);
   const [showTruckLoader, setShowTruckLoader] = useState(true);
+  const [showPrintingLoader, setShowPrintingLoader] = useState(true);
   const [showWagonLoader, setShowWagonLoader] = useState(true);
   const [showPrinting, setShowPrinting] = useState(true);
 
@@ -264,6 +279,10 @@ function Index() {
     //   setActiveSection(3);
     // }
   }, []);
+
+  useEffect(() => {
+    console.log('active section changed: ', activeSection);
+  }, [activeSection]);
 
   useEffect(() => {
     // console.log(showTruckLoader, showWagonLoader, showPrinting);
@@ -543,7 +562,17 @@ function Index() {
                 <h6 style={{ textAlign: 'center' }}>Wagon Loader</h6>
               </div>
             )}
-            {/* {DEACTIVATE_PRINTING_SOLUTION */}
+            {showPrintingLoader && (
+              <div
+                className={`option ${activeSection === 7 ? 'active' : ''}`}
+                onClick={() => setActiveSection(7)}
+                onKeyPress={() => setActiveSection(7)}
+                role="button"
+                tabIndex={0}
+              >
+                <h6 style={{ textAlign: 'center' }}>Printing Loader</h6>
+              </div>
+            )}
             {!showPrinting ? null : (
               <div
                 className={`option ${activeSection === 2 ? 'active' : ''}`}

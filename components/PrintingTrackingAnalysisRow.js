@@ -13,25 +13,25 @@ const useStyles = makeStyles(() => ({
     padding: '5px 10px',
     fontSize: '1vw',
     fontWeight: 200,
-    width: '2vw',
+    width: '2vw'
   },
 
   td1: {
     backgroundColor: '#69E866',
-    width: '3vw',
+    width: '3vw'
   },
   td3: {
     outline: '2px solid transparent',
     width: '100%',
-    background: 'white',
+    background: 'white'
   },
   td4: {
     outline: '2px solid #6B4EFF',
-    maxWidth: '8vw',
+    maxWidth: '8vw'
   },
   td4Inactive: {
     outline: '2px solid transparent',
-    width: '7vw',
+    width: '7vw'
     // maxWidth: '5vw'
   },
   avatar: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles(() => ({
     margin: '0px',
     padding: '0px',
     marginLeft: '10px',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   avatarDisabled: {
     height: '40px',
@@ -50,7 +50,7 @@ const useStyles = makeStyles(() => ({
     margin: '0px',
     padding: '0px',
     marginLeft: '10px',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   td5: {
     width: '4vw',
@@ -59,35 +59,35 @@ const useStyles = makeStyles(() => ({
     maxHeight: '40px',
     margin: '0px',
     padding: '0px',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   td6: {
-    outline: '2px solid #6B4EFF',
+    outline: '2px solid #6B4EFF'
   },
   addBagInput: {
     width: '4vw',
     fontSize: '20px',
-    padding: '10px',
+    padding: '10px'
   },
   transpatentBorder: {
     outline: '2px solid black',
-    width: '10vw',
+    width: '10vw'
   },
   td7: {
     outline: '2px solid black',
     // maxWidth: '8vw',
     // width: '10vh'
-    width: '8vw',
+    width: '8vw'
   },
   td10: {
-    width: '8vw',
+    width: '8vw'
   },
   td11: {
-    width: '10vw',
-  },
+    width: '10vw'
+  }
 }));
 
-function LoaderAnalysisRow({
+function PrintingTrackingAnalysisRow({
   data,
   BAG_TYPES,
   handleNewShipment,
@@ -96,8 +96,9 @@ function LoaderAnalysisRow({
   vehicleType,
   handleBagDone,
   handleBagIncrement,
-  handleBeltReset,
+  handleBeltReset
 }) {
+  console.log(data);
   const classes = useStyles();
   const [bagType, setBagType] = useState('');
   const [wagonno, setWagonno] = useState('');
@@ -105,23 +106,23 @@ function LoaderAnalysisRow({
   const [addBagCount, setAddBagCount] = useState('');
   const [detailModalOpen, setDetailModalOpen] = useState(null);
 
-  const handleAddButton = async () => {
-    // console.log(addBagCount);
-    if (addBagCount === '0' || addBagCount === 0 || addBagCount === '') {
-      return;
-    }
-    await handleBagIncrement(
-      {
-        transaction_id: data?.shipment_id,
-        new_bag_limit: parseInt(addBagCount, 10),
-        old_limit: data?.bag_limit,
-        belt_id: data?.vehicle_id,
-        comment: 'test',
-      },
-      true,
-    );
-    setAddBagCount('');
-  };
+  // const handleAddButton = async () => {
+  //   // console.log(addBagCount);
+  //   if (addBagCount === '0' || addBagCount === 0 || addBagCount === '') {
+  //     return;
+  //   }
+  //   await handleBagIncrement(
+  //     {
+  //       transaction_id: data?.shipment_id,
+  //       new_bag_limit: parseInt(addBagCount, 10),
+  //       old_limit: data?.bag_limit,
+  //       belt_id: data?.vehicle_id,
+  //       comment: 'test'
+  //     },
+  //     true
+  //   );
+  //   setAddBagCount('');
+  // };
 
   const handleReset = () => {
     handleBagDone(
@@ -132,11 +133,11 @@ function LoaderAnalysisRow({
       data?.vehicle_type,
       '',
       data?.bag_count,
-      data?.bag_limit,
+      data?.bag_limit
     );
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     if (rackNo === null && vehicleType === 1) {
       alert('Enter Rack no');
@@ -160,7 +161,7 @@ function LoaderAnalysisRow({
       wagonno: vehicleType === 1 ? wagonno : '',
       rackno: vehicleType === 1 ? rackNo : null,
       gateno: 'default',
-      labelExample: 'default',
+      labelExample: 'default'
     });
     setWagonno('');
     setBagCount('');
@@ -190,14 +191,14 @@ function LoaderAnalysisRow({
               ? data?.is_shipment_complete
                 ? 'yellow'
                 : data?.is_belt_running
-                  ? 'green'
-                  : 'red'
-              : 'white',
+                ? 'green'
+                : 'red'
+              : 'white'
           }}
         >
           {data?.id}
         </td>
-        {data?.shipment_id ? (
+        {/* {data?.shipment_id ? (
           <td className={classes.transpatentBorder}>{data?.bag_type}</td>
         ) : (
           <Select
@@ -205,7 +206,7 @@ function LoaderAnalysisRow({
             variant="outlined"
             value={bagType === '' ? 0 : bagType}
             disabled={data?.shipment_id}
-            onChange={(e) => setBagType(e.target.value)}
+            onChange={e => setBagType(e.target.value)}
           >
             <MenuItem className="table-button" value={0}>
               Select Grade
@@ -216,8 +217,14 @@ function LoaderAnalysisRow({
               </MenuItem>
             ))}
           </Select>
-        )}
+        )} */}
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
+          {data?.is_belt_running ? data?.tag_count : '-'}
+        </td>
+        <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
+          {data?.is_belt_running ? data?.missed_label_count : '-'}
+        </td>
+        {/* <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
           {data?.shipment_id ? (
             data?.wagon_no || data?.licence_number
           ) : (
@@ -232,13 +239,13 @@ function LoaderAnalysisRow({
                 // vehicleType === 1
                 //   ? (e) => handleValueChange(e, setWagonno)
                 //   :
-                (e) => {
+                e => {
                   setWagonno(e.target.value);
                 }
               }
             />
           )}
-        </td>
+        </td> */}
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
           {data?.shipment_id ? (
             data?.bag_limit
@@ -248,19 +255,19 @@ function LoaderAnalysisRow({
               placeholder="Target"
               value={bagCount}
               disabled={data?.shipment_id}
-              onChange={(e) => handleValueChange(e, setBagCount)}
+              onChange={e => handleValueChange(e, setBagCount)}
             />
           )}
         </td>
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
           {data?.shipment_id ? data?.bag_count : '-'}
         </td>
-        {data?.shipment_id ? (
+        {/* {data?.shipment_id ? (
           <td className={classes.td5}>
             <input
               value={addBagCount}
               className={classes.addBagInput}
-              onChange={(e) => handleValueChange(e, setAddBagCount)}
+              onChange={e => handleValueChange(e, setAddBagCount)}
               // onChange={e => setAddBagCount(e.target.value)}
             />
             <Avatar
@@ -277,7 +284,7 @@ function LoaderAnalysisRow({
           </td>
         ) : (
           <td className={classes.td4Inactive}>-</td>
-        )}
+        )} */}
         <td className={classes.td10}>
           {data?.created_at
             ? new Date(data?.created_at).toLocaleTimeString()
@@ -302,11 +309,13 @@ function LoaderAnalysisRow({
           <Button
             className={classes.root}
             disabled={!data.shipment_id || data.is_belt_running}
-            onClick={() => setDetailModalOpen({
-              issue_with_belt: data?.issue_with_belt,
-              belt_id: data?.id,
-              transaction_id: data?.shipment_id,
-            })}
+            onClick={() =>
+              setDetailModalOpen({
+                issue_with_belt: data?.issue_with_belt,
+                belt_id: data?.id,
+                transaction_id: data?.shipment_id
+              })
+            }
           >
             VIEW
           </Button>
@@ -324,10 +333,7 @@ function LoaderAnalysisRow({
         >
           <>
             <p style={{ textAlign: 'center' }}>
-              {detailModalOpen?.issue_with_belt}
-              {' '}
-              -
-              {detailModalOpen?.belt_id}
+              {detailModalOpen?.issue_with_belt} -{detailModalOpen?.belt_id}
             </p>
           </>
         </InfoModal>
@@ -336,4 +342,4 @@ function LoaderAnalysisRow({
   );
 }
 
-export default LoaderAnalysisRow;
+export default PrintingTrackingAnalysisRow;
