@@ -92,8 +92,8 @@ function PrintingTrackingAnalysisRow({
   BAG_TYPES,
   handleNewShipment,
   index,
-  rackNo,
-  vehicleType,
+  // rackNo,
+  // vehicleType,
   handleBagDone,
   handleBagIncrement,
   handleBeltReset
@@ -101,9 +101,9 @@ function PrintingTrackingAnalysisRow({
   console.log(data);
   const classes = useStyles();
   const [bagType, setBagType] = useState('');
-  const [wagonno, setWagonno] = useState('');
+  // const [wagonno, setWagonno] = useState('');
   const [bagCount, setBagCount] = useState('');
-  const [addBagCount, setAddBagCount] = useState('');
+  // const [addBagCount, setAddBagCount] = useState('');
   const [detailModalOpen, setDetailModalOpen] = useState(null);
 
   // const handleAddButton = async () => {
