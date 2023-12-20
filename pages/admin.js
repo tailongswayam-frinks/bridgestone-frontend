@@ -33,7 +33,7 @@ function Index() {
   const [activeSection, setActiveSection] = useState(0);
   const socket = useContext(SocketContext);
 
-  const { isQfullError, setIsQfullError } = useContext(GlobalContext);
+  const { isQfullError, setIsQfullError, userData } = useContext(GlobalContext);
 
   useEffect(() => {
     socket.on('qfull', (data) => {

@@ -319,6 +319,7 @@ function Index() {
       });
     });
     socket.on('service', (data) => {
+      console.log(data, '---In service socket');
       if (data?.error) {
         setShipmentError(data?.error);
         setShipmentOverflow(true);
@@ -340,6 +341,7 @@ function Index() {
             is_belt_running: true,
           };
         }
+        console.log(newState);
         return newState;
       });
     });
