@@ -62,9 +62,7 @@ function AnalyticsCard({
   return (
     <Container
       packerCard={packerCard}
-      progressBackground={
-        getStatus(Math.min((data.count * 100) / PACKER_LIMIT, 100)).colorCode
-      }
+      progressBackground={getStatus(Math.min((data.count * 100) / PACKER_LIMIT, 100)).colorCode}
       status={status}
       active={data?.is_active}
       countReached={
@@ -221,6 +219,7 @@ function AnalyticsCard({
                     variant="text"
                     onClick={rejectModalOpen}
                     style={{ backgroundColor: '#E6C5FC' }}
+                    data-testid={`openView-${data?.id}-${data?.issue_with_belt}`}
                   >
                     View
                   </Button>
@@ -234,6 +233,7 @@ function AnalyticsCard({
                 <FrinksButton
                   variant="filled"
                   className="view-button"
+                  dataTestId={`beltReset-${data?.id}`}
                   onClick={() =>
                     handleBeltReset(
                       data?.id,
