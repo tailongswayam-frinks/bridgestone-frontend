@@ -186,11 +186,13 @@ function PrintingTrackingAnalysisRow({
             className={classes.root1}
             disabled={!data.shipment_id || data.is_belt_running}
             onClick={() =>
-              setDetailModalOpen({
+              {setDetailModalOpen({
                 issue_with_belt: data?.issue_with_belt,
                 belt_id: data?.id,
                 transaction_id: data?.shipment_id
-              })
+              });
+              console.log(data);
+              }
             }
           >
             VIEW

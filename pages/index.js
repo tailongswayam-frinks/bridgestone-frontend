@@ -414,7 +414,8 @@ function Index() {
             missed_label_count: data?.missed_count,
             is_active: false,
             is_belt_running: false,
-            is_shipment_complete: true
+            is_shipment_complete: true,
+            issue_with_belt: data?.issue_with_belt
           }
         }
         // delete newState[belt_id]?.shipment_id
