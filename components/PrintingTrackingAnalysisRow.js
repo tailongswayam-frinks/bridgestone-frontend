@@ -191,7 +191,6 @@ function PrintingTrackingAnalysisRow({
                 belt_id: data?.id,
                 transaction_id: data?.shipment_id
               });
-              console.log(data);
               }
             }
           >

@@ -130,7 +130,6 @@ function Index() {
 
   const handleBeltReset = async (id, bag_counting_belt_id, printing_belt_id, transaction_id) => {
     try {
-      console.log('handling belt reset');
       const data = await put('/api/shipment/reset-belt', {
         belt_id: printing_belt_id || bag_counting_belt_id || id,
         transaction_id,
