@@ -1,5 +1,5 @@
 import { Select, MenuItem, Avatar } from '@material-ui/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +14,14 @@ const useStyles = makeStyles(() => ({
     fontSize: '1vw',
     fontWeight: 200,
     width: '2vw'
+  },
+  root1: {
+    backgroundColor: 'white',
+    color: 'black',
+    padding: '5px 10px',
+    fontSize: '1vw',
+    fontWeight: 200,
+    // width: '2vw'
   },
 
   td1: {
@@ -31,7 +39,7 @@ const useStyles = makeStyles(() => ({
   },
   td4Inactive: {
     outline: '2px solid transparent',
-    width: '7vw'
+    width: '12vw'
     // maxWidth: '5vw'
   },
   avatar: {
@@ -89,95 +97,37 @@ const useStyles = makeStyles(() => ({
 
 function PrintingTrackingAnalysisRow({
   data,
-  BAG_TYPES,
+  // BAG_TYPES,
   handleNewShipment,
   index,
-  // rackNo,
-  // vehicleType,
   handleBagDone,
-  handleBagIncrement,
-  handleBeltReset
+  // handleBagIncrement,
+  handleBeltReset,
+  enablePrintingPlc
 }) {
-  console.log(data);
   const classes = useStyles();
   const [bagType, setBagType] = useState('');
-  // const [wagonno, setWagonno] = useState('');
-  const [bagCount, setBagCount] = useState('');
-  // const [addBagCount, setAddBagCount] = useState('');
+  const [bagCount, setBagCount] = useState(null);
   const [detailModalOpen, setDetailModalOpen] = useState(null);
-
-  // const handleAddButton = async () => {
-  //   // console.log(addBagCount);
-  //   if (addBagCount === '0' || addBagCount === 0 || addBagCount === '') {
-  //     return;
-  //   }
-  //   await handleBagIncrement(
-  //     {
-  //       transaction_id: data?.shipment_id,
-  //       new_bag_limit: parseInt(addBagCount, 10),
-  //       old_limit: data?.bag_limit,
-  //       belt_id: data?.vehicle_id,
-  //       comment: 'test'
-  //     },
-  //     true
-  //   );
-  //   setAddBagCount('');
-  // };
-
-  const handleReset = () => {
-    handleBagDone(
-      data?.shipment_id,
-      data?.vehicle_id,
-      null,
-      data?.vehicle_id,
-      data?.vehicle_type,
-      '',
-      data?.bag_count,
-      data?.bag_limit
-    );
-  };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (rackNo === null && vehicleType === 1) {
-      alert('Enter Rack no');
-      return;
-    }
-    if (wagonno === null) {
-      alert('Enter wagon no');
-      return;
-    }
-    if (bagCount === null) {
-      alert('Enter target');
-      return;
-    }
-
     await handleNewShipment({
-      printingId: null,
-      loaderId: data?.id,
-      licenceNumber: vehicleType === 0 ? wagonno : '',
-      bagType,
-      bagCount,
-      wagonno: vehicleType === 1 ? wagonno : '',
-      rackno: vehicleType === 1 ? rackNo : null,
-      gateno: 'default',
-      labelExample: 'default'
+      printingId: data?.id,
+      bag_limit: Number(bagCount),
     });
-    setWagonno('');
-    setBagCount('');
-    setBagType('');
   };
+
+  const handleReset = async e => {
+    setBagCount(0)
+    handleBagDone(data?.id)
+  }
 
   const handleValueChange = (e, setterFunction) => {
     const inputValue = e.target.value;
     if (/^\d*$/.test(inputValue)) {
       setterFunction(e.target.value);
     }
-    // console.log(!Number.isNaN(parseInt(e.target.value)));
-    // if (!Number.isNaN(parseInt(e.target.value)) || e.target.value === '') {
-    //   setterFunction(e.target.value);
-    // }
-    // console.log(bagCount);
   };
 
   return (
@@ -188,73 +138,27 @@ function PrintingTrackingAnalysisRow({
           className={classes.td11}
           style={{
             background: data?.shipment_id
-              ? data?.is_shipment_complete
-                ? 'yellow'
-                : data?.is_belt_running
-                ? 'green'
-                : 'red'
+              ? (data?.is_shipment_complete ? 'yellow' : (data?.is_belt_running ? "green" : "red")) 
               : 'white'
           }}
         >
           {data?.id}
         </td>
-        {/* {data?.shipment_id ? (
-          <td className={classes.transpatentBorder}>{data?.bag_type}</td>
-        ) : (
-          <Select
-            className={classes.td3}
-            variant="outlined"
-            value={bagType === '' ? 0 : bagType}
-            disabled={data?.shipment_id}
-            onChange={e => setBagType(e.target.value)}
-          >
-            <MenuItem className="table-button" value={0}>
-              Select Grade
-            </MenuItem>
-            {BAG_TYPES.map((e, idx) => (
-              <MenuItem className="table-button" value={e} key={idx}>
-                {e}
-              </MenuItem>
-            ))}
-          </Select>
-        )} */}
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
-          {data?.is_belt_running ? data?.tag_count : '-'}
+          {data?.tag_count}
         </td>
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
-          {data?.is_belt_running ? data?.missed_label_count : '-'}
+          {data?.missed_label_count}
         </td>
-        {/* <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
-          {data?.shipment_id ? (
-            data?.wagon_no || data?.licence_number
-          ) : (
-            <input
-              value={wagonno}
-              style={{ width: '12vw', padding: '10px' }}
-              disabled={data?.shipment_id}
-              placeholder={
-                vehicleType === 1 ? 'Add Wagon No.' : 'Add Truck No.'
-              }
-              onChange={
-                // vehicleType === 1
-                //   ? (e) => handleValueChange(e, setWagonno)
-                //   :
-                e => {
-                  setWagonno(e.target.value);
-                }
-              }
-            />
-          )}
-        </td> */}
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
           {data?.shipment_id ? (
             data?.bag_limit
           ) : (
             <input
-              style={{ width: '8vw', padding: '10px' }}
-              placeholder="Target"
-              value={bagCount}
-              disabled={data?.shipment_id}
+              style={{ width: '8vw', padding: '10px', textAlign: 'center' }}
+              placeholder={enablePrintingPlc ? "Target" : ""}
+              value={data?.shipment_id ? bagCount : null}
+              disabled={data?.shipment_id || !enablePrintingPlc}
               onChange={e => handleValueChange(e, setBagCount)}
             />
           )}
@@ -262,42 +166,14 @@ function PrintingTrackingAnalysisRow({
         <td className={data?.shipment_id ? classes.td7 : classes.td4Inactive}>
           {data?.shipment_id ? data?.bag_count : '-'}
         </td>
-        {/* {data?.shipment_id ? (
-          <td className={classes.td5}>
-            <input
-              value={addBagCount}
-              className={classes.addBagInput}
-              onChange={e => handleValueChange(e, setAddBagCount)}
-              // onChange={e => setAddBagCount(e.target.value)}
-            />
-            <Avatar
-              // disabled={null}
-              className={
-                addBagCount === '0' || addBagCount === ''
-                  ? classes.avatarDisabled
-                  : classes.avatar
-              }
-              onClick={handleAddButton}
-            >
-              <IoMdAdd />
-            </Avatar>
-          </td>
-        ) : (
-          <td className={classes.td4Inactive}>-</td>
-        )} */}
-        <td className={classes.td10}>
-          {data?.created_at
-            ? new Date(data?.created_at).toLocaleTimeString()
-            : '-'}
-        </td>
         <td>
           {data?.shipment_id ? (
-            <Button className={classes.root} onClick={handleReset}>
+            <Button className={classes.root1} onClick={handleReset}>
               RESET
             </Button>
           ) : (
             <Button
-              disabled={bagCount === '' || bagCount === 0 || bagCount === '0'}
+              disabled={bagCount === '' || bagCount === 0 || bagCount === '0' || bagCount === null}
               className={classes.root}
               onClick={handleSubmit}
             >
@@ -307,7 +183,7 @@ function PrintingTrackingAnalysisRow({
         </td>
         <td>
           <Button
-            className={classes.root}
+            className={classes.root1}
             disabled={!data.shipment_id || data.is_belt_running}
             onClick={() =>
               setDetailModalOpen({

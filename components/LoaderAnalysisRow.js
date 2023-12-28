@@ -98,6 +98,7 @@ function LoaderAnalysisRow({
   handleBagIncrement,
   handleBeltReset,
 }) {
+  console.log('data recieved by shipment', data)
   const classes = useStyles();
   const [bagType, setBagType] = useState('');
   const [wagonno, setWagonno] = useState('');

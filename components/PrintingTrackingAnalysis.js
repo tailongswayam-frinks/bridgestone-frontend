@@ -65,128 +65,64 @@ const useStyles = makeStyles(() => ({
 
 function PrintingShipmentAnalysis({
   vehicleType,
-  vehicleBelts,
-  handleNewShipment,
+  printingBelts,
+  handleNewPrintingShipment,
   handleFlag,
   handleBagDone,
   handleBagIncrement,
-  handleBeltReset
+  handleBeltReset,
+  enablePrintingPlc
 }) {
-  console.log('vehicleBelts', vehicleBelts);
   const classes = useStyles();
   const { bagTypes: BAG_TYPES } = useContext(GlobalContext);
   const [filterButton, setFilterButton] = useState(2);
-  const [filterVehicle, setFiltervehicle] = useState();
-  const [rackNo, setRackNo] = useState('');
-  const [rackNoModified, setRackNoModified] = useState(false);
-  const [savedRackNo, setSavedRackNo] = useState('');
-  const [rackStarted, setRackStarted] = useState('0');
-
-  // const handleRackSubmit = async () => {
-  //   if (rackStarted === '1') {
-  //     await put('/api/shipment/end-rack', {
-  //       rackStatus: 0,
-  //       rack_no: rackNo
-  //     });
-  //     setRackStarted('0');
-  //     return;
-  //   }
-  //   if (rackNo === '' || rackNo === null || rackNo === undefined) {
-  //     alert('Please enter rackNo');
-  //     return;
-  //   }
-  //   console.log(rackNo);
-  //   await post('/api/shipment/update-rack-status', {
-  //     rackStatus: 1,
-  //     rackNo
-  //   });
-  //   setRackNoModified(false);
-  //   setLocalStorage('rackno', rackNo);
-  //   setSavedRackNo(rackNo);
-  //   setRackStarted('1');
-  // };
+  const [filterPrinter, setFilterPrinter] = useState();
 
   useEffect(() => {
     setFilterButton(vehicleType);
   }, [vehicleType]);
 
   useEffect(() => {
-    const filteredLoaders = {};
-    if (vehicleBelts) {
-      Object.values(vehicleBelts).forEach(element => {
-        filteredLoaders[element.id] = element;
+    const filteredPrinters = {};
+    if (printingBelts) {
+      Object.values(printingBelts).forEach(element => {
+        filteredPrinters[element.id] = element;
       });
-      setFiltervehicle(filteredLoaders);
+      setFilterPrinter(filteredPrinters);
     }
-  }, [vehicleBelts, filterButton]);
-
-  useEffect(() => {
-    // setSavedRackNo(getLocalStorage('rackno'));
-    // setRackNo(getLocalStorage('rackno'));
-    const fetchRackStatus = async () => {
-      const res = await get('/api/shipment/rack-status');
-      console.log(res?.data, '-----------------');
-      setRackStarted(res?.data?.rackStatus);
-      setRackNo(res?.data?.rackNo);
-    };
-    fetchRackStatus();
-  }, []);
+  }, [printingBelts, filterButton]);
 
   return (
     <>
-      {/* {vehicleType === 1 && (
-        <div className={classes.rackContainer}>
-          RAKE NUMBER :{' '}
-          <input
-            className={classes.inputRackNo}
-            placeholder="Rack No."
-            onChange={e => {
-              setRackNo(e.target.value);
-              setRackNoModified(true);
-            }}
-            value={rackNo}
-            disabled={rackStarted === '1'}
-          />
-          <Button className={classes.editRackButton} onClick={handleRackSubmit}>
-            {rackStarted === '1' ? 'END' : 'START'}
-          </Button>
-        </div>
-      )}
-      {vehicleType === 0 && <div className={classes.rackContainer1} />} */}
       {<div className={classes.rackContainer1} />}
       <div className={classes.tableDiv}>
         <table className="custom-table">
           <thead>
             <tr>
               <th>S.No.</th>
-              <th>LODNO</th>
-              {/* <th>GRADE</th> */}
-              {/* <th>{vehicleType === 1 ? 'WAGON NO' : 'TRUCK NO'}</th> */}
+              <th>PRINTING BELT NUMBER</th>
               <th>TOTAL COUNT</th>
               <th>TOTAL REJECT COUNT</th>
               <th>TARGET</th>
               <th>ACTUAL</th>
-              {/* <th>ADD BAG</th> */}
-              <th>START TIME</th>
               <th>SET</th>
               <th>VIEW</th>
             </tr>
           </thead>
           <tbody>
-            {filterVehicle &&
-              Object.values(filterVehicle).map((e, index) => (
+            {filterPrinter &&
+              Object.values(filterPrinter).map((e, index) => (
                 <PrintingTrackingAnalysisRow
                   key={index}
                   data={e}
-                  BAG_TYPES={BAG_TYPES}
-                  handleNewShipment={arg => handleNewShipment(arg)}
+                  // BAG_TYPES={BAG_TYPES}
+                  handleNewShipment={arg => handleNewPrintingShipment(arg)}
                   handleFlag={handleFlag}
                   index={index + 1}
-                  // rackNo={savedRackNo}
-                  // vehicleType={vehicleType}
                   handleBagDone={handleBagDone}
-                  handleBagIncrement={handleBagIncrement}
+                  // handleBagIncrement={handleBagIncrement}
                   handleBeltReset={handleBeltReset}
+                  enablePrintingPlc={enablePrintingPlc}
                 />
               ))}
           </tbody>

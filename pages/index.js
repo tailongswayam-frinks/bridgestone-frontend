@@ -9,7 +9,6 @@ import Container from 'styles/homepage.styles';
 import Maintenance from 'components/Maintenance';
 import Notification from 'components/Notification';
 import PrintingAnalysis from 'components/PrintingAnalysis';
-import ServiceQuery from 'reactQueries/shipmentQueries';
 import SystemHealth from 'components/SystemHealth';
 import { SocketContext } from 'context/SocketContext';
 import InfoModal from 'components/InfoModal/InfoModal';
@@ -23,6 +22,7 @@ import { Button } from '@material-ui/core';
 import ShipmentTracking from 'components/ShipmentAnalysis';
 import LoaderRelation from 'components/LoaderRelation';
 import PrintingShipmentAnalysis from 'components/PrintingTrackingAnalysis';
+import { PrintingServiceQuery, ServiceQuery } from 'reactQueries/shipmentQueries';
 
 function DashboardComponent({
   activeSection,
@@ -32,10 +32,11 @@ function DashboardComponent({
   handleBagDone,
   handleBeltReset,
   handleNewShipment,
-  handleFlag
+  handleNewPrintingShipment,
+  handleFlag,
+  enablePrintingPlc,
+  handlePrintingShipmentReset
 }) {
-  // console.log(handleBeltReset);
-  console.log('Dashboard component recieved value:', activeSection);
   if (activeSection === 0) {
     return (
       <ShipmentTracking
@@ -82,12 +83,13 @@ function DashboardComponent({
   if (activeSection === 7) {
     return (
       <PrintingShipmentAnalysis
-        vehicleBelts={printingBelts}
-        handleNewShipment={handleNewShipment}
+        printingBelts={printingBelts}
+        handleNewPrintingShipment={handleNewPrintingShipment}
         handleFlag={handleFlag}
-        handleBagDone={handleBagDone}
+        handleBagDone={handlePrintingShipmentReset}
         handleBagIncrement={handleBagIncrement}
         handleBeltReset={handleBeltReset}
+        enablePrintingPlc={enablePrintingPlc}
       />
     );
   }
@@ -96,19 +98,24 @@ function DashboardComponent({
 
 function Index() {
   const serviceMutation = ServiceQuery();
+  const PrintingServiceMutation = PrintingServiceQuery();
   const socket = useContext(SocketContext);
   const [isLoading, setIsLoading] = useState(false);
   const [printingBelts, setPrintingBelts] = useState({});
+  const [enablePrintingPlc, setEnablePrintingPlc] = useState(false);
   const [vehicleBelts, setVehicleBelts] = useState(null);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [shipmentFormOpen, setShipmentFormOpen] = useState(false);
+  const [printingShipmentFormOpen, setPrintingShipmentFormOpen] = useState(false);
   const [maintenanceFormOpen, setMaintenanceFormOpen] = useState(false);
   const [notificationsFormOpen, setNotificationsFormOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
   const [reverseShipmentFormOpen, setReverseShipmentFormOpen] = useState(null);
+  const [reversePrintingShipmentFormOpen, setReversePrintingShipmentFormOpen] = useState(null);
   const [missPrintTransactionId, setmissPrintTransactionId] = useState({});
   const [alertCounter, setAlertCounter] = useState(0);
   const [shipmentError, setShipmentError] = useState(null);
+  const [printingShipmentError, setPrintingShipmentError] = useState(null);
   const [bagDoneModalOpen, setBagDoneModalOpen] = useState(null);
   const [bagIncrementModalOpen, setBagIncrementModalOpen] = useState(null);
   const [showTruckLoader, setShowTruckLoader] = useState(true);
@@ -122,7 +129,8 @@ function Index() {
     setShipmentOverflow,
     shipmentOverflow,
     isQfullError,
-    setIsQfullError
+    setIsQfullError,
+    setPringingShipmentOverflow
   } = useContext(GlobalContext);
 
   const handleBeltReset = async (
@@ -172,6 +180,10 @@ function Index() {
     }
   };
 
+  const handlePrintingShipmentReset = async (printing_belt_id) => {
+    await put('/api/shipment/close-printing-shipment', {belt_id: printing_belt_id})
+  }
+
   const handleBagDone = async (
     transaction_id,
     vehicle_id,
@@ -193,7 +205,7 @@ function Index() {
           printing_belt_id,
           machine_id,
           vehicle_type
-        });
+        });transactionMissed
         return;
       }
     }
@@ -210,6 +222,10 @@ function Index() {
 
   const handleNewShipment = async data => {
     serviceMutation.mutate(data);
+  };
+
+  const handleNewPrintingShipment = async data => {
+    PrintingServiceMutation.mutate(data);
   };
 
   const alertsnooze = e => {
@@ -233,9 +249,22 @@ function Index() {
     }
   }, [serviceMutation]);
 
+  useEffect(() => {
+    if (PrintingServiceMutation.isSuccess) {
+      PrintingServiceMutation.reset();
+      setPrintingShipmentFormOpen(false);
+      setReversePrintingShipmentFormOpen(null);
+    } else if (PrintingServiceMutation.isError) {
+      PrintingServiceMutation.reset();
+      setPrintingShipmentOverflow(true);
+      setPrintingShipmentError(PrintingServiceMutation?.error?.response?.data?.message);
+      setPrintingShipmentFormOpen(false);
+      setReversePrintingShipmentFormOpen(null);
+    }
+  }, [PrintingServiceMutation]);
+
   const handleBagIncrement = async (data, flag) => {
     if (flag === true) {
-      // console.log('hey');
       setBagIncrementModalOpen(data);
       return;
     }
@@ -254,6 +283,7 @@ function Index() {
       setVehicleBelts(res?.data?.data?.vehicleBeltRes);
       setBeltTrippingEnabled(res?.data?.data?.enableBeltTripping);
       setShowPrinting(!res?.data?.data?.showPrinting);
+      setEnablePrintingPlc(res?.data?.data.enablePrintingPlc)
       setShowTruckLoader(
         res?.data?.data?.showLoader === 0 && res?.data?.data.truckLoaders > 0
       );
@@ -279,10 +309,6 @@ function Index() {
     //   setActiveSection(3);
     // }
   }, []);
-
-  useEffect(() => {
-    console.log('active section changed: ', activeSection);
-  }, [activeSection]);
 
   useEffect(() => {
     // console.log(showTruckLoader, showWagonLoader, showPrinting);
@@ -323,7 +349,8 @@ function Index() {
           [transaction_id]: {
             belt_id,
             machine_id: belt_id,
-            missed_count: data?.transactionMissed
+            missed_count: data?.transactionMissed,
+            tag_count: data?.count,
           }
         }));
       }
@@ -334,7 +361,8 @@ function Index() {
           [belt_id]: {
             ...prevState[belt_id],
             tag_count: data?.count,
-            missed_label_count: data?.missed_count
+            missed_label_count: data?.missed_count,
+            bag_count: data?.bag_count
           }
         };
       });
@@ -348,11 +376,52 @@ function Index() {
           [belt_id]: {
             ...prevState[belt_id],
             tag_count: data?.count,
-            missed_label_count: data?.missed_count
+            missed_label_count: data?.missed_count,
+            bag_count: data?.bag_count
           }
         };
       });
     });
+    socket.on('printing-shipment-reset', data => {
+      const belt_id = data?.belt_id
+      setPrintingBelts(prevState => {
+        if(!prevState) return null;
+        const newState = {
+          ...prevState,
+          [belt_id]: {
+            ...prevState[belt_id],
+            tag_count: data?.count,
+            missed_label_count: data?.missed_count,
+            is_active: false,
+            is_belt_running: false,
+          }
+        }
+        delete newState[belt_id]?.shipment_id
+        delete newState[belt_id]?.bag_limit
+        delete newState[belt_id]?.is_shipment_complete
+        return newState
+      })
+    })
+    socket.on('printing-shipment-close', data => {
+      const belt_id = data?.belt_id
+      setPrintingBelts(prevState => {
+        if(!prevState) return null;
+        const newState = {
+          ...prevState,
+          [belt_id]: {
+            ...prevState[belt_id],
+            tag_count: data?.count,
+            missed_label_count: data?.missed_count,
+            is_active: false,
+            is_belt_running: false,
+            is_shipment_complete: true
+          }
+        }
+        // delete newState[belt_id]?.shipment_id
+        // delete newState[belt_id]?.bag_limit
+        return newState
+      })
+    })
     socket.on('service', data => {
       if (data?.error) {
         setShipmentError(data?.error);
@@ -378,6 +447,28 @@ function Index() {
         return newState;
       });
     });
+    socket.on('printing-service', data => {
+      if (data?.error) {
+        setPrintingShipmentError(data?.error);
+        setPringingShipmentOverflow(true);
+      }
+      setPrintingBelts(prevState => {
+        if (!prevState) return null;
+        const newState = { ...prevState };
+        if (newState[data?.printing_belt_id]) {
+          newState[data?.printing_belt_id] = {
+            ...newState[data?.printing_belt_id],
+            shipment_id: data?.transaction_id,
+            bag_limit: data?.bag_limit,
+            bag_count: data?.bag_count,
+            // tag_count: data?.tag_count,
+            is_belt_running: true,
+            is_shipment_complete: false
+          };
+        }
+        return newState;
+      });
+    });
     socket.on('background-reset', () => {
       setPrintingBelts(prevState => {
         if (!prevState) return null;
@@ -393,9 +484,6 @@ function Index() {
         return newState;
       });
     });
-    // socket.on('release-belt', () => {
-    //   console.log("Feature removed --- Release Maintenence Belt");
-    // });
     socket.on('bag-done', data => {
       if (data?.error) {
         setShipmentError(data?.error);
@@ -457,14 +545,15 @@ function Index() {
     socket.on('tripping_belt', ({ belt_id, issue_with_belt }) => {
       setPrintingBelts(prevState => {
         if (!prevState) return null;
-        return {
+        const newState = {
           ...prevState,
           [belt_id]: {
             ...prevState[belt_id],
             is_belt_running: false,
-            issue_with_belt
+            issue_with_belt,
           }
         };
+        return newState;
       });
     });
     socket.on(
@@ -573,7 +662,7 @@ function Index() {
                 <h6 style={{ textAlign: 'center' }}>Printing Loader</h6>
               </div>
             )}
-            {!showPrinting ? null : (
+            {/* {!showPrinting ? null : (
               <div
                 className={`option ${activeSection === 2 ? 'active' : ''}`}
                 onClick={() => setActiveSection(2)}
@@ -583,7 +672,7 @@ function Index() {
               >
                 <h6 style={{ textAlign: 'center' }}>Printing belt</h6>
               </div>
-            )}
+            )} */}
             <div
               className={`option ${activeSection === 3 ? 'active' : ''}`}
               onClick={() => setActiveSection(3)}
@@ -630,6 +719,9 @@ function Index() {
             handleBagDone={handleBagDone}
             handleBeltReset={handleBeltReset}
             handleNewShipment={handleNewShipment}
+            handleNewPrintingShipment={handleNewPrintingShipment}
+            enablePrintingPlc={enablePrintingPlc}
+            handlePrintingShipmentReset={handlePrintingShipmentReset}
           />
           {alertCounter !== 0 ? (
             <div className="alert">
