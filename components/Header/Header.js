@@ -9,7 +9,7 @@ import { IoIosMenu } from 'react-icons/io';
 
 import ImageKitLoader from 'utils/ImageLoader';
 import PropTypes from 'prop-types';
-import BypassSystem from 'components/BypassSystem';
+// import BypassSystem from 'components/BypassSystem';
 import { GlobalContext } from 'context/GlobalContext';
 import { put } from 'utils/api';
 import { BASE_URL } from 'utils/constants';
@@ -25,7 +25,7 @@ function Header({
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
   const [headerDropDownVisible, setHeaderDropDownVisible] = useState(false);
-  const [bypassSystem, setBypassSystem] = useState(false);
+  // const [bypassSystem, setBypassSystem] = useState(false);
 
   const { trippingStatus, setTrippingStatus, beltTrippingEnabled } = useContext(GlobalContext);
 
@@ -61,7 +61,7 @@ function Header({
 
         <Hidden smDown>
           <div className="links">
-            {beltTrippingEnabled && (
+            {/* {beltTrippingEnabled && (
               <Button
                 variant="contained"
                 color="primary"
@@ -72,7 +72,7 @@ function Header({
                   {trippingStatus ? 'BYPASSED' : 'BYPASS SYSTEM'}
                 </p>
               </Button>
-            )}
+            )} */}
             <Button
               variant="contained"
               color="primary"
@@ -205,14 +205,14 @@ function Header({
           // bypassSystem={bypassSystem}
         />
       </Hidden>
-      {bypassSystem ? (
+      {/* {bypassSystem ? (
         <BypassSystem
           open={bypassSystem}
           close={() => setBypassSystem(false)}
           trippingStatus={trippingStatus}
           setTrippingStatus={(e) => setTrippingStatus(e)}
         />
-      ) : null}
+      ) : null} */}
     </Container>
   );
 }

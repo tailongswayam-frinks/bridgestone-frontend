@@ -53,7 +53,19 @@ function PrintingAnalysis({ printingBelts, handleBeltReset }) {
           hideConfirm
           hideComment
         >
-          <DefectiveBags belt_id={rejectModalOpen?.printing_belt_id} />
+          <DefectiveBags
+            belt_id={rejectModalOpen?.printing_belt_id}
+            // hour={hour}
+            date={[
+              {
+                startDate: new Date(),
+                endDate: new Date(),
+                key: 'selection',
+              },
+            ]}
+            dateUnAltered={true}
+          />
+          {/* <DefectiveBags belt_id={rejectModalOpen?.printing_belt_id} /> */}
         </InfoModal>
       ) : null}
     </>

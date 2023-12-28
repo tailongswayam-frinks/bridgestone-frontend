@@ -433,6 +433,7 @@ function Index() {
             is_belt_running: true,
           };
         }
+        console.log(newState);
         return newState;
       });
     });

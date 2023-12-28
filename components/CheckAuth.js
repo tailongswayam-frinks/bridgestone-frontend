@@ -17,7 +17,7 @@ function CheckAuth({ children }) {
       setUserData({ isLoggedIn: false });
     }
   }, [data, setUserData, isSuccess, isError]);
-
+  
   if (!userData) return <Loader />;
 
   return children;

@@ -79,12 +79,14 @@ function ShipmentAnalysis({
   const [rackNoModified, setRackNoModified] = useState(false);
   const [savedRackNo, setSavedRackNo] = useState('');
   const [rackStarted, setRackStarted] = useState('0');
+  const [rackId, setRackId] = useState('0');
 
   const handleRackSubmit = async () => {
     if (rackStarted === '1') {
       await put('/api/shipment/end-rack', {
         rackStatus: 0,
         rack_no: rackNo,
+        rack_id: rackId,
       });
       setRackStarted('0');
       return;
@@ -97,6 +99,7 @@ function ShipmentAnalysis({
     await post('/api/shipment/update-rack-status', {
       rackStatus: 1,
       rackNo,
+      rackId: rackId,
     });
     setRackNoModified(false);
     setLocalStorage('rackno', rackNo);
@@ -128,16 +131,16 @@ function ShipmentAnalysis({
       console.log(res?.data, '-----------------');
       setRackStarted(res?.data?.rackStatus);
       setRackNo(res?.data?.rackNo);
+      setRackId(res?.data?.rackId);
     };
     fetchRackStatus();
-  }, []);
+  }, [rackStarted]);
 
   return (
     <>
       {vehicleType === 1 && (
         <div className={classes.rackContainer}>
-          RAKE NUMBER :
-          {' '}
+          RAKE NUMBER :{' '}
           <input
             className={classes.inputRackNo}
             placeholder="Rack No."
@@ -172,8 +175,8 @@ function ShipmentAnalysis({
               </tr>
             </thead>
             <tbody>
-              {filterVehicle
-                && Object.values(filterVehicle).map((e, index) => (
+              {filterVehicle &&
+                Object.values(filterVehicle).map((e, index) => (
                   <LoaderAnalysisRow
                     key={index}
                     data={e}

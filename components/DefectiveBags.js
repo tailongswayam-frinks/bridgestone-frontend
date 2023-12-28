@@ -14,6 +14,7 @@ function DefectiveBags({
   date,
   dateUnAltered,
   shift,
+  hour,
 }) {
   const [rejectBags, setRejectBags] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,12 +44,14 @@ function DefectiveBags({
         updatedDateRange: getStartAndEndDate(date, dateUnAltered),
 
         shift,
+        // hour,
       });
       setRejectBags(res?.data?.data);
       setIsLoading(false);
     };
     // console.log(shift);
-    if (shift !== null && beltId) fetchRejectBagsByBeltShiftWise();
+    // if (shift !== null && beltId) fetchRejectBagsByBeltShiftWise();
+    if ((shift !== null || hour !== null) && beltId) fetchRejectBagsByBeltShiftWise();
     else if (!beltId) fetchRejectBags();
     else fetchRejectBagsByBelt();
   }, [beltId, transactionId]);
