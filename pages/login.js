@@ -15,7 +15,7 @@ function Login() {
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const { userData, setUserData } = useContext(GlobalContext);
+  const { userData, setUserData } = useContext(GlobalContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,8 +24,10 @@ function Login() {
       password,
     });
 
-    console.log(res?.data);
     if (res?.data[0] === true) {
+      setUserData({
+        isLoggedIn: true,
+      });
       router.push('/admin');
     } else {
       setError(res?.data[1]);
@@ -54,6 +56,7 @@ function Login() {
   //   router.push('/admin');
   //   return <Loader />;
   // }
+  
 
   return (
     <Container>

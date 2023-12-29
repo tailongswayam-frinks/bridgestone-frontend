@@ -515,6 +515,8 @@ function Index() {
       if (data?.error) {
         setShipmentError(data?.error);
         setShipmentOverflow(true);
+        setIsLoading(false);
+        return;
       }
       setVehicleBelts((prevState) => {
         if (!prevState) return null;
