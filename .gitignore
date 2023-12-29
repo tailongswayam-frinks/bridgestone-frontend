@@ -1,0 +1,7 @@
+node_modules
+.env
+.next
+.eslintrc.js
+.env.local
+out
+/public/state_change_logs/*
