@@ -35,6 +35,8 @@ export function GlobalProvider({ children }) {
         setNumberOfWhatsappRecipient,
         isQfullError,
         setIsQfullError,
+        printingShipmentOverflow,
+        setPrintingShipmentOverflow
       }}
     >
       {children}

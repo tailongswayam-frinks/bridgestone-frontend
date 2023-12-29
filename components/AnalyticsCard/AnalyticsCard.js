@@ -42,7 +42,7 @@ function AnalyticsCard({
   handleBagDone,
   handleBeltReset
 }) {
-  console.log('data', data);
+  // console.log('data', data);
   const [timeDifference, setTimeDifference] = useState(0);
   const { deactivateLoaderSolution: DEACTIVATE_LOADER_SOLUTION } =
     useContext(GlobalContext);

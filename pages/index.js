@@ -125,7 +125,7 @@ function Index() {
     shipmentOverflow,
     isQfullError,
     setIsQfullError,
-    setPringingShipmentOverflow
+    setPrintingShipmentOverflow
   } = useContext(GlobalContext);
 
   const handleBeltReset = async (id, bag_counting_belt_id, printing_belt_id, transaction_id) => {
@@ -439,7 +439,7 @@ function Index() {
     socket.on('printing-service', data => {
       if (data?.error) {
         setPrintingShipmentError(data?.error);
-        setPringingShipmentOverflow(true);
+        setPrintingShipmentOverflow(true);
       }
       setPrintingBelts(prevState => {
         if (!prevState) return null;
