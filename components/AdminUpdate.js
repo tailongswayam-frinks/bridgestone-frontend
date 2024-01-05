@@ -1,6 +1,4 @@
-import {
-  useContext, useEffect, useState, useRef,
-} from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Loader from 'components/Loader';
 import { GlobalContext } from 'context/GlobalContext';
@@ -21,13 +19,12 @@ import {
 import UpdateDatabase from 'components/UpdateDatabase';
 import UpdateModelWeights from 'components/UpdateModelWeights';
 import PythonDataExtraction from 'components/PythonDataExtraction';
-import {
-  get, getFile, getZipFile, post,
-} from 'utils/api';
+import { get, getFile, getZipFile, post } from 'utils/api';
 import UpdateTmate from 'components/UpdateTmate';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import ShipmentOverFlowModal from './ShipmentOverFlowModal';
+import receiverHtml from '../public/receiver.html';
 
 const useStyles = makeStyles((theme) => ({
   select: {
@@ -215,9 +212,7 @@ function Admin() {
       // );
       // console.log(response);
 
-      const res = await getZipFile(
-        '/api/configuration/download-extracted-frames',
-      );
+      const res = await getZipFile('/api/configuration/download-extracted-frames');
       console.log('response', res.data);
       downloadZIP(res.data);
       // const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -254,9 +249,7 @@ function Admin() {
       // console.log(res?.data);
 
       setImShow(res?.data?.imShow === null ? 0 : res?.data?.imShow);
-      setFrameExtraction(
-        res?.data?.frameExtraction === null ? 0 : res?.data?.frameExtraction,
-      );
+      setFrameExtraction(res?.data?.frameExtraction === null ? 0 : res?.data?.frameExtraction);
     };
     fetchImShowFrameExtraction();
   }, []);
@@ -269,38 +262,20 @@ function Admin() {
       });
       const serverId = res?.data?.serverId;
       // console.log(isWagon == false);
-      setwsURL(
-        `ws://192.168.69.${150 + parseInt(serverId, 10)}:${
-          isWagon == false ? 8765 : 8766
-        }`,
-      );
+      setwsURL(`ws://192.168.69.${150 + parseInt(serverId, 10)}:${isWagon == false ? 8765 : 8766}`);
     };
 
     fetchServerId();
   }, [beltId, isWagon]);
 
   useEffect(() => {
-    // console.log(wsURL);
-    axios
-      .get('/receiver.html')
-      .then((response) => {
-        const html = response.data.replace('%%WS_URL%%', wsURL);
-        // console.log(html);
-        setHtmlContent(html);
-      })
-      .catch((error) => {
-        console.error('An error occurred while fetching the HTML:', error);
-      });
+    try {
+      const html = receiverHtml.replace('%%WS_URL%%', wsURL);
+      setHtmlContent(html);
+    } catch (error) {
+      console.error('An error occurred while fetching the HTML:', error);
+    }
   }, [wsURL]);
-
-  // if (!userData) {
-  //   return <Loader />;
-  // }
-
-  // if (userData.isLoggedIn === false) {
-  //   router.push('/login');
-  //   return <Loader />;
-  // }
 
   return (
     <>
@@ -319,10 +294,7 @@ function Admin() {
         onClose={() => setShowFrame(null)}
       >
         <>
-          <Button
-            style={{ float: 'right', margin: '40px' }}
-            onClick={() => setShowFrame(false)}
-          >
+          <Button style={{ float: 'right', margin: '40px' }} onClick={() => setShowFrame(false)}>
             Close
           </Button>
           {/* <iframe
@@ -353,10 +325,7 @@ function Admin() {
               Real Time Video
             </AccordionSummary>
             <AccordionDetails>
-              <div
-                className="center"
-                style={{ display: 'flex', flexDirection: 'row' }}
-              >
+              <div className="center" style={{ display: 'flex', flexDirection: 'row' }}>
                 {/* <p className="update-scope">
                 Updates database values by fetching info from AWS and restarts
                 necessary modules
@@ -386,9 +355,7 @@ function Admin() {
                     </MenuItem>
                   ))}
                   {allPrintingBelts?.map((e, index) => (
-                    <MenuItem value={e?.printing_belt_id}>
-                      {e?.printing_belt_id}
-                    </MenuItem>
+                    <MenuItem value={e?.printing_belt_id}>{e?.printing_belt_id}</MenuItem>
                   ))}
                 </Select>
 
@@ -439,17 +406,13 @@ function Admin() {
                 </Button> */}
               </div>
             </AccordionDetails>
-          </Accordion>
-          {' '}
+          </Accordion>{' '}
           <Accordion>
             <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
               Frame Extraction
             </AccordionSummary>
             <AccordionDetails>
-              <div
-                className="center "
-                style={{ display: 'flex', flexDirection: 'row' }}
-              >
+              <div className="center " style={{ display: 'flex', flexDirection: 'row' }}>
                 {/* <p className="update-scope">
                 Updates database values by fetching info from AWS and restarts
                 necessary modules
@@ -463,8 +426,7 @@ function Admin() {
                   <Button
                     className={classes.select_2}
                     style={{
-                      backgroundColor:
-                        frameExtraction == 1 ? '#B5179E' : '#F5F5F5',
+                      backgroundColor: frameExtraction == 1 ? '#B5179E' : '#F5F5F5',
                       color: frameExtraction == 0 ? '#B5179E' : '#F5F5F5',
                       // width: '120px',
                       height: '50px',
@@ -476,8 +438,7 @@ function Admin() {
                   <Button
                     className={classes.select_2}
                     style={{
-                      backgroundColor:
-                        frameExtraction == 0 ? '#B5179E' : '#F5F5F5',
+                      backgroundColor: frameExtraction == 0 ? '#B5179E' : '#F5F5F5',
                       color: frameExtraction == 1 ? '#B5179E' : '#F5F5F5',
                       // width: '120px',
                       height: '50px',
@@ -491,8 +452,7 @@ function Admin() {
                   disabled={frameExtraction == true}
                   className={classes.select_2}
                   style={{
-                    backgroundColor:
-                      frameExtraction == false ? '#B5179E' : '#F5F5F5',
+                    backgroundColor: frameExtraction == false ? '#B5179E' : '#F5F5F5',
                     color: frameExtraction == false ? '#F5F5F5' : '#B5179E',
                     // width: '120px',
                     height: '50px',
@@ -533,9 +493,7 @@ function Admin() {
             </AccordionDetails>
           </Accordion>
           <Accordion>
-            <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
-              Update Tmate
-            </AccordionSummary>
+            <AccordionSummary expandIcon={<MdOutlineExpandMore />}>Update Tmate</AccordionSummary>
             <AccordionDetails>
               <UpdateTmate />
             </AccordionDetails>

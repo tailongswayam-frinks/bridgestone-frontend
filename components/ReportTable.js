@@ -30,6 +30,8 @@ import InfoModal from 'components/InfoModal';
 import DefectiveBags from 'components/DefectiveBags';
 import moment from 'moment/moment';
 import { getStatus } from 'components/AnalyticsCard/AnalyticsCard';
+import { getFile } from 'utils/api';
+import Loader from 'components/Loader';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -117,11 +119,11 @@ const shipmentHeadTruck = [
     disablePadding: true,
     label: 'Loading Time',
   },
-  // {
-  //   id: 'action',
-  //   disablePadding: true,
-  //   label: 'View',
-  // },
+  {
+    id: 'action',
+    disablePadding: true,
+    label: 'Download Video',
+  },
 ];
 const shipmentHeadWagon = [
   {
@@ -184,11 +186,11 @@ const shipmentHeadWagon = [
     disablePadding: true,
     label: 'Loading Time',
   },
-  // {
-  //   id: 'action',
-  //   disablePadding: true,
-  //   label: 'View',
-  // },
+  {
+    id: 'action',
+    disablePadding: true,
+    label: 'Download Video',
+  },
 ];
 
 const printingHead = [
@@ -527,7 +529,37 @@ function RenderTable({ layoutType, data, setRejectIndex }) {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
-  console.log('data:', data);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const downloadVideo = async (transaction_id) => {
+    try {
+      setIsLoading(true);
+      const response = await getFile(`/api/report/video?transaction_id=${transaction_id}`);
+
+      if (response.status === 200) {
+        const resData = await response.data;
+        const blob = new Blob([resData], { type: 'video/mp4' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'video.mp4';
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        setIsLoading(false);
+      } else {
+        console.error('File download failed:', response.statusText);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error during file download:', error);
+      setIsLoading(false);
+    }
+  };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -542,6 +574,7 @@ function RenderTable({ layoutType, data, setRejectIndex }) {
     case 0:
       return (
         <Table className={classes.table} size="medium">
+          {isLoading ? <Loader /> : null}
           <EnhancedTableHead
             classes={classes}
             order={order}
@@ -601,19 +634,18 @@ function RenderTable({ layoutType, data, setRejectIndex }) {
                       .format('HH:mm:ss')}{' '}
                   </TableCell>
 
-                  {/* <TableCell style={{ textAlign: 'center' }}>
+                  <TableCell style={{ textAlign: 'center' }}>
                     <FrinksButton
-                      text="View"
+                      text="Download"
                       variant="outlined"
                       style={{
                         fontSize: '12px',
                         padding: '2px 10px 2px 10px',
-                        height: '30px'
+                        height: '30px',
                       }}
-                      onClick={() => setRejectIndex(index)}
-                      isInactive={row?.misprinting_count === 0}
+                      onClick={() => downloadVideo(row?.shipment_id)}
                     />
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ),
               // ) : null
@@ -678,19 +710,18 @@ function RenderTable({ layoutType, data, setRejectIndex }) {
                     )
                     .format('HH:mm:ss')}{' '}
                 </TableCell>
-                {/* <TableCell style={{ textAlign: 'center' }}>
-                    <FrinksButton
-                      text="View"
-                      variant="outlined"
-                      style={{
-                        fontSize: '12px',
-                        padding: '2px 10px 2px 10px',
-                        height: '30px'
-                      }}
-                      onClick={() => setRejectIndex(index)}
-                      isInactive={row?.misprinting_count === 0}
-                    />
-                  </TableCell> */}
+                <TableCell style={{ textAlign: 'center' }}>
+                  <FrinksButton
+                    text="Download"
+                    variant="outlined"
+                    style={{
+                      fontSize: '12px',
+                      padding: '2px 10px 2px 10px',
+                      height: '30px',
+                    }}
+                    onClick={() => downloadVideo(row?.shipment_id)}
+                  />
+                </TableCell>
               </TableRow>
             ))}{' '}
           </TableBody>
