@@ -29,6 +29,8 @@ function DashboardComponent({
   handleBagIncrement,
   printingBelts,
   vehicleBelts,
+  rackCount,
+  setRackCount,
   handleBagDone,
   handleBeltReset,
   handleNewShipment,
@@ -43,6 +45,8 @@ function DashboardComponent({
         vehicleType={0}
         vehicleBelts={vehicleBelts}
         handleNewShipment={handleNewShipment}
+        rackCount={rackCount}
+        setRackCount={setRackCount}
         handleFlag={handleFlag}
         handleBagDone={handleBagDone}
         handleBagIncrement={handleBagIncrement}
@@ -55,6 +59,8 @@ function DashboardComponent({
       <ShipmentTracking
         vehicleType={1}
         vehicleBelts={vehicleBelts}
+        rackCount={rackCount}
+        setRackCount={setRackCount}
         handleNewShipment={handleNewShipment}
         handleFlag={handleFlag}
         handleBagDone={handleBagDone}
@@ -117,6 +123,7 @@ function Index() {
   const [showPrintingLoader, setShowPrintingLoader] = useState(true);
   const [showWagonLoader, setShowWagonLoader] = useState(true);
   const [showPrinting, setShowPrinting] = useState(true);
+  const [rackCount, setRackCount] = useState(0);
 
   const {
     setBeltTrippingEnabled,
@@ -325,7 +332,9 @@ function Index() {
         }
         return newState;
       });
+      setRackCount(data?.rack_count);
     });
+
     socket.on('tag-entry', (data) => {
       const transaction_id = parseInt(data?.transaction_id, 10);
       const belt_id = data?.belt_id;
@@ -709,6 +718,8 @@ function Index() {
             handleBagIncrement={handleBagIncrement}
             printingBelts={printingBelts}
             vehicleBelts={vehicleBelts}
+            rackCount={rackCount}
+            setRackCount={setRackCount}
             setReverseShipmentFormOpen={(e) => setReverseShipmentFormOpen(e)}
             handleBagDone={handleBagDone}
             handleBeltReset={handleBeltReset}

@@ -114,7 +114,7 @@ function ConfirmationPreview({ data }) {
             <div className="key">Vehicle Details</div>
             <div className="value">
               {licenceNumber === ''
-                ? `Wagon No.- ${wagonNo} | Rake No.- ${rackNo} | Gate/Door No.- ${gateNo}`
+                ? `Wagon No.- ${wagonNo} | Rack No.- ${rackNo} | Gate/Door No.- ${gateNo}`
                 : `Truck No.- ${licenceNumber}`}
             </div>
           </div>

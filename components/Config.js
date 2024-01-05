@@ -210,10 +210,10 @@ function Config({
             ) : (
               <>
                 {/* <div className="input-container">
-                  <div className="label">Rake no.</div>
+                  <div className="label">Rack no.</div>
                   <TextField
                     variant="outlined"
-                    placeholder="Rake no."
+                    placeholder="Rack no."
                     value={rackno}
                     onChange={(e) => setRackno(e.target.value)}
                     InputProps={{

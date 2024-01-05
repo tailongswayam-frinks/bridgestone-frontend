@@ -9,10 +9,11 @@ import LoaderAnalysisRow from './LoaderAnalysisRow';
 // Define styles using makeStyles
 const useStyles = makeStyles(() => ({
   rackContainer: {
+    width: '100%',
     marginTop: '120px',
-    marginLeft: '80px',
+    textAlign: 'center',
     fontSize: '24px',
-    fontWeight: '800',
+    fontWeight: '800'
   },
   rackContainer1: {
     marginTop: '120px',
@@ -22,7 +23,7 @@ const useStyles = makeStyles(() => ({
     height: '20px',
   },
   inputRackNo: {
-    marginTop: '20px',
+    // marginTop: '20px',
     height: '30px',
     fontSize: '20px',
     marginRight: '10px',
@@ -31,12 +32,12 @@ const useStyles = makeStyles(() => ({
     width: '130px',
     border: 'none',
     padding: '0 10px',
+    textAlign: 'center'
   },
   rackButton: {
     backgroundColor: '#008847',
     fontSize: '20px',
     borderRadius: '6px',
-    // padding: '2px 9px',
     fontWeight: '700',
     border: 'none',
     height: '30px',
@@ -45,26 +46,40 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#69E866',
     fontSize: '20px',
     borderRadius: '6px',
-    // padding: '2px 9px',
     fontWeight: '700',
     border: 'none',
     height: '30px',
   },
   tableContainer: {
     marginTop: '140px',
-    // marginLeft: '80px',
-    // fontSize: '24px',
-    // fontWeight: '800'
+    width: '1000px'
   },
   tableDiv: {
-    // padding: '0px',
-    paddingBottom: '30px',
+    paddingBottom: '30px'
   },
+  tableData: {
+    // textAlign: 'center',
+    width: '50%'
+  },
+  rackCountDiv: {
+    width: '30%',
+    marginTop: '20px',
+    textAlign: 'center'
+  },
+  rackCountNumber: {
+    fontSize: '24px',
+    color: '#555'
+  },
+  rackCountText: {
+    fontSize: '24px',
+  }
 }));
 
 function ShipmentAnalysis({
   vehicleType,
   vehicleBelts,
+  rackCount,
+  setRackCount,
   handleNewShipment,
   handleFlag,
   handleBagDone,
@@ -83,12 +98,17 @@ function ShipmentAnalysis({
 
   const handleRackSubmit = async () => {
     if (rackStarted === '1') {
-      await put('/api/shipment/end-rack', {
+      const res = await put('/api/shipment/end-rack', {
         rackStatus: 0,
         rack_no: rackNo,
         rack_id: rackId,
       });
+      if(!res?.data?.is_closed){
+        alert('Cannot end Rack until all shipments are closed');
+        return;
+      }
       setRackStarted('0');
+      setRackCount(0);
       return;
     }
     if (rackNo === '' || rackNo === null || rackNo === undefined) {
@@ -128,10 +148,10 @@ function ShipmentAnalysis({
     // setRackNo(getLocalStorage('rackno'));
     const fetchRackStatus = async () => {
       const res = await get('/api/shipment/rack-status');
-      console.log(res?.data, '-----------------');
       setRackStarted(res?.data?.rackStatus);
       setRackNo(res?.data?.rackNo);
       setRackId(res?.data?.rackId);
+      setRackCount(res?.data?.rackCount);
     };
     fetchRackStatus();
   }, [rackStarted]);
@@ -139,26 +159,42 @@ function ShipmentAnalysis({
   return (
     <>
       {vehicleType === 1 && (
-        <div className={classes.rackContainer}>
-          RAKE NUMBER :{' '}
-          <input
-            className={classes.inputRackNo}
-            placeholder="Rack No."
-            onChange={(e) => {
-              setRackNo(e.target.value);
-              setRackNoModified(true);
-            }}
-            value={rackNo}
-            disabled={rackStarted === '1'}
-          />
-          <Button className={classes.editRackButton} onClick={handleRackSubmit}>
-            {rackStarted === '1' ? 'END' : 'START'}
-          </Button>
+        <div>
+          <table className={classes.rackContainer}>
+            <td className={classes.tableData}> 
+              {/* <div> */}
+                RACK NUMBER :{' '}
+                <input
+                  className={classes.inputRackNo}
+                  placeholder="Rack No."
+                  onChange={(e) => {
+                    setRackNo(e.target.value);
+                    setRackNoModified(true);
+                  }}
+                  value={rackNo}
+                  disabled={rackStarted === '1'}
+                  />
+                <Button className={classes.editRackButton} onClick={handleRackSubmit}>
+                  {rackStarted === '1' ? 'END' : 'START'}
+                </Button>
+              {/* </div> */}
+            </td>
+            <td className={classes.tableData}> 
+            {(rackStarted === '1' && vehicleType === 1) && (
+                  <table className={classes.rackCountDiv}>
+                        RACK COUNT : 
+                      <th className={classes.rackCountNumber}>
+                        {rackCount}
+                      </th>
+                  </table>
+                )}
+                </td>
+          </table>
         </div>
       )}
       {vehicleType === 0 && <div className={classes.rackContainer1} />}
       {(rackStarted === '1' || vehicleType === 0) && (
-        <div className={classes.tableDiv}>
+        // <div className={classes.tableDiv}>
           <table className="custom-table">
             <thead>
               <tr>
@@ -193,7 +229,7 @@ function ShipmentAnalysis({
                 ))}
             </tbody>
           </table>
-        </div>
+        // </div>
       )}
       {(rackStarted === '0' || rackStarted === null) && vehicleType === 1 && (
         <h1 style={{ marginTop: '100px' }}>Please start the rack first</h1>

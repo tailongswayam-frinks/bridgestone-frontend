@@ -570,7 +570,7 @@ function RenderTable({ layoutType, data, setRejectIndex }) {
                   </TableCell>
                   <TableCell style={{ textAlign: 'center' }}>
                     {row?.licence_number}
-                    {/* // , Gate/Door No.- ${row.gate_no}, Rake No.- ${row.rack_no} */}
+                    {/* // , Gate/Door No.- ${row.gate_no}, Rack No.- ${row.rack_no} */}
                   </TableCell>
                   <TableCell style={{ textAlign: 'center' }}>
                     {row?.loading_belt_id || 'NA'}{' '}
